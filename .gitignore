@@ -3,3 +3,11 @@
 
 # Dossier de travail local et privé (consignes, notes, plans de formation)
 WORK-LOCAL/
+
+# Dépendances Composer & configuration d'environnement
+/vendor/
+.env
+*.log
+.phpunit.cache/
+
+

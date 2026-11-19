@@ -49,8 +49,9 @@ class AdminController extends BaseController
         $user = Auth::user();
         if ($user === null || !$user->isAdmin()) {
             http_response_code(403);
-            $this->render('errors/404', [
-                'pageTitle' => 'Accès Interdit',
+            $this->render('errors/error', [
+                'errorCode' => 403,
+                'pageTitle' => 'Accès Interdit (403)',
                 'message' => 'Cette section est strictement réservée aux administrateurs de la plateforme.'
             ]);
             exit;

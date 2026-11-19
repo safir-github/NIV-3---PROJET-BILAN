@@ -73,8 +73,9 @@ class CheckoutController extends BaseController
         $token = $_POST['_csrf_token'] ?? null;
         if (!Csrf::validateToken($token)) {
             http_response_code(403);
-            $this->render('errors/404', [
-                'pageTitle' => 'Erreur de sécurité',
+            $this->render('errors/error', [
+                'errorCode' => 403,
+                'pageTitle' => 'Erreur de sécurité (403)',
                 'message' => 'Jeton de sécurité CSRF invalide ou formulaire expiré. Veuillez réessayer.'
             ]);
             return;
@@ -91,8 +92,9 @@ class CheckoutController extends BaseController
         // 3. User account must be active (email activated)
         if ($user === null || !$user->isActive()) {
             http_response_code(403);
-            $this->render('errors/404', [
-                'pageTitle' => 'Achat non autorisé',
+            $this->render('errors/error', [
+                'errorCode' => 403,
+                'pageTitle' => 'Achat non autorisé (403)',
                 'message' => 'Votre compte doit être activé par email avant de pouvoir commander des cours.'
             ]);
             return;
@@ -158,10 +160,14 @@ class CheckoutController extends BaseController
             header('Location: ' . $session->url, true, 303);
             exit;
         } catch (Exception $e) {
+            // Clean up unfulfilled pending order so no orphan order remains
+            $this->orderRepository->deleteOrder($order['id']);
+
             http_response_code(502);
-            $this->render('errors/404', [
-                'pageTitle' => 'Erreur Passerelle de Paiement',
-                'message' => 'Impossible de joindre la passerelle de paiement sécurisée Stripe. Veuillez vérifier votre connexion ou réessayer plus tard.'
+            $this->render('errors/error', [
+                'errorCode' => 502,
+                'pageTitle' => 'Passerelle de paiement indisponible',
+                'message' => 'Impossible d\'initialiser la session de paiement sécurisée Stripe (' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '). La commande en attente a été annulée.'
             ]);
         }
     }

@@ -20,6 +20,8 @@ class Course
     private ?string $description;
     private float $price;
     private ?string $themeName;
+    /** @var Lesson[] */
+    private array $lessons = [];
 
     public function __construct(array $attributes = [])
     {
@@ -39,4 +41,15 @@ class Course
     public function getDescription(): ?string { return $this->description; }
     public function getPrice(): float { return $this->price; }
     public function getThemeName(): ?string { return $this->themeName; }
+
+    /**
+     * @return Lesson[]
+     */
+    public function getLessons(): array { return $this->lessons; }
+
+    /**
+     * @param Lesson[] $lessons
+     * @return self
+     */
+    public function setLessons(array $lessons): self { $this->lessons = $lessons; return $this; }
 }

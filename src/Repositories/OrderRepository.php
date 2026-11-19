@@ -134,4 +134,20 @@ class OrderRepository extends BaseRepository
             'updated_by' => 'stripe_webhook'
         ]);
     }
+
+    /**
+     * Find all orders with user details for admin dashboard.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function findAllWithUsers(): array
+    {
+        $sql = 'SELECT o.*, u.email as user_email, u.first_name, u.last_name
+                FROM orders o
+                JOIN users u ON o.user_id = u.id
+                ORDER BY o.id DESC';
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

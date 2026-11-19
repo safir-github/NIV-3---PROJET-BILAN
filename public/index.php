@@ -19,6 +19,7 @@ use App\Controllers\CheckoutController;
 use App\Controllers\StripeWebhookController;
 use App\Controllers\LessonController;
 use App\Controllers\CertificationController;
+use App\Controllers\AdminController;
 
 // Load environment variables (.env)
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
@@ -37,6 +38,12 @@ $router->get('/lessons/{slug}', CatalogController::class, 'lesson');
 // Lesson validation & Certifications
 $router->post('/lessons/{id}/validate', LessonController::class, 'validate');
 $router->get('/certifications', CertificationController::class, 'index');
+
+// Backoffice routes (Admin only)
+$router->get('/admin', AdminController::class, 'index');
+$router->post('/admin/users/{id}/role', AdminController::class, 'updateUserRole');
+$router->post('/admin/courses/create', AdminController::class, 'createCourse');
+$router->post('/admin/courses/{id}/delete', AdminController::class, 'deleteCourse');
 
 // Checkout & Stripe routes
 $router->get('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');

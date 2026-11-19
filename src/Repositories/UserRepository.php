@@ -104,4 +104,37 @@ class UserRepository extends BaseRepository
             'updated_by' => 'email_activation'
         ]);
     }
+
+    /**
+     * Get all users for administration dashboard.
+     *
+     * @return User[]
+     */
+    public function findAll(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM users ORDER BY id DESC');
+        $users = [];
+        while ($row = $stmt->fetch()) {
+            $users[] = new User($row);
+        }
+        return $users;
+    }
+
+    /**
+     * Update user role.
+     *
+     * @param int $id
+     * @param string $role
+     * @param string $updatedBy
+     * @return bool
+     */
+    public function updateRole(int $id, string $role, string $updatedBy = 'admin'): bool
+    {
+        $stmt = $this->db->prepare('UPDATE users SET role = :role, updated_by = :updated_by WHERE id = :id');
+        return $stmt->execute([
+            'id' => $id,
+            'role' => $role,
+            'updated_by' => $updatedBy
+        ]);
+    }
 }

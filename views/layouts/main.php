@@ -18,6 +18,9 @@
                 <a href="/courses">Catalogue</a>
                 <?php if (\App\Core\Auth::check()): ?>
                     <?php $currentUser = \App\Core\Auth::user(); ?>
+                    <?php if ($currentUser && $currentUser->isAdmin()): ?>
+                        <a href="/admin" class="btn btn-outline btn-sm">Administration</a>
+                    <?php endif; ?>
                     <a href="/certifications">Certifications</a>
                     <span class="user-greeting">Bonjour, <?= htmlspecialchars($currentUser ? $currentUser->getFirstName() : 'Apprenant', ENT_QUOTES, 'UTF-8') ?></span>
                     <form action="/logout" method="POST" style="display:inline;">

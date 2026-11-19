@@ -151,4 +151,41 @@ class CatalogRepository extends BaseRepository
         $row = $stmt->fetch();
         return $row ? new Lesson($row) : null;
     }
+
+    /**
+     * Create a new course.
+     *
+     * @param array<string, mixed> $data
+     * @return int
+     */
+    public function createCourse(array $data): int
+    {
+        $sql = 'INSERT INTO courses (theme_id, title, slug, description, price, created_by, updated_by)
+                VALUES (:theme_id, :title, :slug, :description, :price, :created_by, :updated_by)';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'theme_id' => $data['theme_id'],
+            'title' => $data['title'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'price' => $data['price'],
+            'created_by' => $data['created_by'] ?? 'admin',
+            'updated_by' => $data['updated_by'] ?? 'admin'
+        ]);
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Delete a course.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteCourse(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM courses WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
 }

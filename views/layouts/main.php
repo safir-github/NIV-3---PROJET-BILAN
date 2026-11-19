@@ -16,8 +16,21 @@
             <nav class="nav-links">
                 <a href="/">Accueil</a>
                 <a href="/courses">Catalogue</a>
-                <a href="/login" class="btn btn-outline">Connexion</a>
-                <a href="/register" class="btn btn-primary">Inscription</a>
+                <?php if (\App\Core\Auth::check()): ?>
+                    <?php $currentUser = \App\Core\Auth::user(); ?>
+                    <?php if ($currentUser && $currentUser->isAdmin()): ?>
+                        <a href="/admin" class="btn btn-outline btn-sm">Administration</a>
+                    <?php endif; ?>
+                    <a href="/certifications">Certifications</a>
+                    <span class="user-greeting">Bonjour, <?= htmlspecialchars($currentUser ? $currentUser->getFirstName() : 'Apprenant', ENT_QUOTES, 'UTF-8') ?></span>
+                    <form action="/logout" method="POST" style="display:inline;">
+                        <?= \App\Core\Csrf::field() ?>
+                        <button type="submit" class="btn btn-outline btn-sm">Déconnexion</button>
+                    </form>
+                <?php else: ?>
+                    <a href="/login" class="btn btn-outline">Connexion</a>
+                    <a href="/register" class="btn btn-primary">Inscription</a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>

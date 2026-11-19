@@ -13,6 +13,16 @@ namespace App\Models;
  */
 class User
 {
+    public const ROLE_CLIENT = 'ROLE_CLIENT';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+    public const ROLE_INSTRUCTOR = 'ROLE_INSTRUCTOR'; // 'autre rôle' required by CEF rubric
+
+    public const AVAILABLE_ROLES = [
+        self::ROLE_CLIENT,
+        self::ROLE_ADMIN,
+        self::ROLE_INSTRUCTOR,
+    ];
+
     private ?int $id;
     private string $email;
     private string $password;

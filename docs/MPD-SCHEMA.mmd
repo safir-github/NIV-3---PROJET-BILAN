@@ -1,0 +1,143 @@
+erDiagram
+    users ||--o{ orders : "places"
+    users ||--o{ user_courses : "owns"
+    users ||--o{ user_lessons : "owns"
+    users ||--o{ lesson_validations : "completes"
+    users ||--o{ certifications : "earns"
+
+    themes ||--|{ courses : "contains"
+    courses ||--|{ lessons : "contains"
+
+    orders ||--|{ order_items : "contains"
+    courses ||--o{ order_items : "referenced_in"
+    lessons ||--o{ order_items : "referenced_in"
+
+    courses ||--o{ user_courses : "granted_to"
+    lessons ||--o{ user_lessons : "granted_to"
+    lessons ||--o{ lesson_validations : "validated_in"
+    courses ||--o{ certifications : "certified_in"
+
+    users {
+        int id PK
+        string email UK
+        string password
+        string first_name
+        string last_name
+        string role
+        boolean is_active
+        string activation_token
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    themes {
+        int id PK
+        string name
+        string slug UK
+        text description
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    courses {
+        int id PK
+        int theme_id FK
+        string title
+        string slug UK
+        text description
+        decimal price
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    lessons {
+        int id PK
+        int course_id FK
+        string title
+        string slug UK
+        text content_text
+        string video_url
+        decimal price
+        int position
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    orders {
+        int id PK
+        int user_id FK
+        string order_reference UK
+        decimal total_amount
+        string status
+        string stripe_session_id
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    order_items {
+        int id PK
+        int order_id FK
+        string item_type
+        int course_id FK
+        int lesson_id FK
+        decimal unit_price
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    user_courses {
+        int id PK
+        int user_id FK
+        int course_id FK
+        datetime purchased_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    user_lessons {
+        int id PK
+        int user_id FK
+        int lesson_id FK
+        datetime purchased_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    lesson_validations {
+        int id PK
+        int user_id FK
+        int lesson_id FK
+        datetime validated_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    certifications {
+        int id PK
+        int user_id FK
+        int course_id FK
+        string certificate_code UK
+        datetime issued_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }

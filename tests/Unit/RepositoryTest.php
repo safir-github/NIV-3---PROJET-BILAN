@@ -8,25 +8,39 @@ use PHPUnit\Framework\TestCase;
 use App\Config\Database;
 use App\Repositories\CatalogRepository;
 use App\Repositories\UserRepository;
+use PDO;
 
 /**
  * Class RepositoryTest
  * 
  * Unit tests validating Data Access Objects (DAO / Repositories) functionality and security.
  * Meets CEF project evaluation requirements (2 points on automated tests).
+ * Utilizes database transaction rollbacks to maintain test isolation.
  * 
  * @package App\Tests\Unit
  */
 class RepositoryTest extends TestCase
 {
+    private PDO $db;
     private CatalogRepository $catalogRepository;
     private UserRepository $userRepository;
 
     protected function setUp(): void
     {
-        $db = Database::getConnection();
-        $this->catalogRepository = new CatalogRepository($db);
-        $this->userRepository = new UserRepository($db);
+        parent::setUp();
+        $this->db = Database::getConnection();
+        $this->db->beginTransaction();
+
+        $this->catalogRepository = new CatalogRepository($this->db);
+        $this->userRepository = new UserRepository($this->db);
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->db->inTransaction()) {
+            $this->db->rollBack();
+        }
+        parent::tearDown();
     }
 
     /**
@@ -107,5 +121,19 @@ class RepositoryTest extends TestCase
         $refreshed = $this->userRepository->findById($user->getId());
         $this->assertTrue($refreshed->isActive());
         $this->assertNull($refreshed->getActivationToken());
+    }
+
+    /**
+     * Test SQL Injection resistance on UserRepository via prepared statements.
+     */
+    public function testSqlInjectionAttemptFailsSafely(): void
+    {
+        // SQL injection payload attempting authentication bypass
+        $maliciousPayload = "' OR '1'='1";
+
+        $user = $this->userRepository->findByEmail($maliciousPayload);
+
+        // Prepared statement should treat the payload strictly as literal string and return null
+        $this->assertNull($user);
     }
 }

@@ -3,12 +3,12 @@
 -- =====================================================================
 
 -- 1. Utilisateurs de test initiaux
--- Mot de passe haché avec password_hash('Password123!', PASSWORD_BCRYPT) : $2y$12$NqLqf1vS9t3R5yB0bC1xOu0uFzR9q4bN8yD1x9u0v1w2x3y4z5a6b (ou généré dynamiquement)
--- Pour tests rapides : Mot de passe = Password123!
+-- Mot de passe = Password123!
+-- Haché avec password_hash('Password123!', PASSWORD_BCRYPT)
 INSERT INTO users (id, email, password, first_name, last_name, role, is_active, activation_token, created_by, updated_by) VALUES
-(1, 'admin@knowledge.local', '$2y$10$wT5fN8MUp7hS7yP7yH3FpuoI5k1sV0I1FwY2D2k0u3V4x5y6z7a8b', 'Admin', 'Knowledge', 'ROLE_ADMIN', 1, NULL, 'seed', 'seed'),
-(2, 'client@knowledge.local', '$2y$10$wT5fN8MUp7hS7yP7yH3FpuoI5k1sV0I1FwY2D2k0u3V4x5y6z7a8b', 'Jean', 'Dupont', 'ROLE_CLIENT', 1, NULL, 'seed', 'seed'),
-(3, 'inactif@knowledge.local', '$2y$10$wT5fN8MUp7hS7yP7yH3FpuoI5k1sV0I1FwY2D2k0u3V4x5y6z7a8b', 'Pierre', 'Martin', 'ROLE_CLIENT', 0, 'dummy_token_123456', 'seed', 'seed');
+(1, 'admin@knowledge.local', '$2y$12$GB6g1zfuypk4DDBQor9vSecsUPKmOm0xyVzmX8mdsQVkB6WiY6A7.', 'Admin', 'Knowledge', 'ROLE_ADMIN', 1, NULL, 'seed', 'seed'),
+(2, 'client@knowledge.local', '$2y$12$GB6g1zfuypk4DDBQor9vSecsUPKmOm0xyVzmX8mdsQVkB6WiY6A7.', 'Jean', 'Dupont', 'ROLE_CLIENT', 1, NULL, 'seed', 'seed'),
+(3, 'inactif@knowledge.local', '$2y$12$GB6g1zfuypk4DDBQor9vSecsUPKmOm0xyVzmX8mdsQVkB6WiY6A7.', 'Pierre', 'Martin', 'ROLE_CLIENT', 0, 'dummy_token_123456', 'seed', 'seed');
 
 -- 2. Thèmes officiels
 INSERT INTO themes (id, name, slug, description, created_by, updated_by) VALUES

@@ -14,10 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class CertificationTest
- * 
- * Verifies lesson progression tracking, curriculum completion checks,
- * and automated issuance of course certifications with isolated database transactions.
- * 
+ *
+ * Verifies lesson progression, course validation and the theme certification rule
+ * of the brief, using isolated database transactions.
+ *
+ * Fixture data used: theme 1 (Musique) contains course 1 (lessons 1 and 2)
+ * and course 2 (lessons 3 and 4).
+ *
  * @package Tests\Unit
  */
 class CertificationTest extends TestCase
@@ -49,9 +52,25 @@ class CertificationTest extends TestCase
     }
 
     /**
-     * Test full certification flow: validating all lessons of a course unlocks certification.
+     * Validate a lesson the way the controller does: record it, then run the progression check.
+     *
+     * @param int $userId
+     * @param int $lessonId
+     * @param int $courseId
+     * @return string|null Certificate code if the theme certification was issued
      */
-    public function testCourseCompletionAndCertificationIssuance(): void
+    private function validateLesson(int $userId, int $lessonId, int $courseId): ?string
+    {
+        $this->progressRepository->validateLesson($userId, $lessonId);
+        return $this->certificationService->checkAndAwardCertification($userId, $courseId);
+    }
+
+    /**
+     * Create a fresh active client for the test.
+     *
+     * @return int
+     */
+    private function createUser(): int
     {
         $user = $this->userRepository->create([
             'email' => 'graduate_' . uniqid() . '@example.com',
@@ -62,33 +81,71 @@ class CertificationTest extends TestCase
             'is_active' => 1
         ]);
 
-        $userId = $user->getId();
-        $courseId = 1; // Course 1 (Guitare débutant: 2 lessons in fixtures: lesson 1 and 2)
+        return $user->getId();
+    }
 
-        // Initially course is not completed
-        $this->assertFalse($this->progressRepository->isCourseCompleted($userId, $courseId));
-        $this->assertNull($this->certificationService->checkAndAwardCourseCertification($userId, $courseId));
+    /**
+     * Completing a course validates it, but the theme certification needs every course of the theme.
+     */
+    public function testCourseValidationThenThemeCertification(): void
+    {
+        $userId = $this->createUser();
 
-        // Validate Lesson 1
+        // Lessons 1 and 2 complete course 1: course validated, theme not yet complete
+        $this->assertNull($this->validateLesson($userId, 1, 1));
+        $this->assertNull($this->validateLesson($userId, 2, 1));
+        $this->assertTrue($this->progressRepository->hasValidatedCourse($userId, 1));
+        $this->assertFalse($this->progressRepository->hasValidatedCourse($userId, 2));
+        $this->assertSame([], $this->certificationRepository->findUserCertifications($userId));
+
+        // Lesson 3 alone is not enough
+        $this->assertNull($this->validateLesson($userId, 3, 2));
+        $this->assertFalse($this->progressRepository->hasValidatedCourse($userId, 2));
+
+        // Lesson 4 completes course 2 and therefore theme 1
+        $code = $this->validateLesson($userId, 4, 2);
+        $this->assertNotNull($code);
+        $this->assertStringStartsWith('KL-CERT-', $code);
+        $this->assertTrue($this->progressRepository->hasValidatedCourse($userId, 2));
+
+        // The certificate is attached to the theme, not to a course
+        $certs = $this->certificationRepository->findUserCertifications($userId);
+        $this->assertCount(1, $certs);
+        $this->assertSame('Musique', $certs[0]['theme_name']);
+        $this->assertSame($code, $certs[0]['certificate_code']);
+    }
+
+    /**
+     * Certificates are idempotent: a second check returns the same code and creates no duplicate.
+     */
+    public function testThemeCertificationIsIdempotent(): void
+    {
+        $userId = $this->createUser();
+
+        foreach ([1, 2, 3] as $lessonId) {
+            $this->validateLesson($userId, $lessonId, $lessonId <= 2 ? 1 : 2);
+        }
+        $code = $this->validateLesson($userId, 4, 2);
+
+        // Validating the same lesson again must not create another certificate
+        $again = $this->certificationService->checkAndAwardCertification($userId, 2);
+        $this->assertSame($code, $again);
+        $this->assertCount(1, $this->certificationRepository->findUserCertifications($userId));
+    }
+
+    /**
+     * A lesson validated twice is stored once.
+     */
+    public function testLessonValidationIsNotDuplicated(): void
+    {
+        $userId = $this->createUser();
+
         $this->assertTrue($this->progressRepository->validateLesson($userId, 1));
-        $this->assertFalse($this->progressRepository->isCourseCompleted($userId, $courseId));
+        $this->assertTrue($this->progressRepository->validateLesson($userId, 1));
 
-        // Validate Lesson 2 (Now all lessons in Course 1 are validated)
-        $this->assertTrue($this->progressRepository->validateLesson($userId, 2));
-        $this->assertTrue($this->progressRepository->isCourseCompleted($userId, $courseId));
-
-        // Automatically issue certification
-        $certCode = $this->certificationService->checkAndAwardCourseCertification($userId, $courseId);
-        $this->assertNotNull($certCode);
-        $this->assertStringStartsWith('KL-CERT-', $certCode);
-
-        // Verify certification is retrievable
-        $userCerts = $this->certificationRepository->findUserCertifications($userId);
-        $this->assertCount(1, $userCerts);
-        $this->assertSame($certCode, $userCerts[0]['certificate_code']);
-
-        // Idempotency: calling certification service again returns the same certificate code without error
-        $reIssuedCode = $this->certificationService->checkAndAwardCourseCertification($userId, $courseId);
-        $this->assertSame($certCode, $reIssuedCode);
+        $count = (int) $this->db->query(
+            "SELECT COUNT(*) FROM lesson_validations WHERE user_id = {$userId} AND lesson_id = 1"
+        )->fetchColumn();
+        $this->assertSame(1, $count);
     }
 }

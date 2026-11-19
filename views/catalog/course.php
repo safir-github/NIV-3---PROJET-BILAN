@@ -25,7 +25,10 @@
                     <span class="price-label">Prix complet du cursus :</span>
                     <span class="price-amount"><?= number_format($course->getPrice(), 2, ',', ' ') ?> €</span>
                 </div>
-                <a href="/checkout/course/<?= $course->getId() ?>" class="btn btn-primary btn-block">Acheter le cursus complet</a>
+                <form action="/checkout/course/<?= $course->getId() ?>" method="POST">
+                    <?= \App\Core\Csrf::field() ?>
+                    <button type="submit" class="btn btn-primary btn-block">Acheter le cursus complet</button>
+                </form>
                 <p class="secure-note">🔒 Paiement sécurisé via Stripe Sandbox</p>
             <?php endif; ?>
         </div>

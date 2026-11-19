@@ -44,10 +44,18 @@ $router->get('/admin', AdminController::class, 'index');
 $router->post('/admin/users/{id}/role', AdminController::class, 'updateUserRole');
 $router->post('/admin/courses/create', AdminController::class, 'createCourse');
 $router->post('/admin/courses/{id}/delete', AdminController::class, 'deleteCourse');
+$router->get('/admin/catalog', AdminController::class, 'catalog');
+$router->post('/admin/themes/create', AdminController::class, 'createTheme');
+$router->post('/admin/themes/{id}/update', AdminController::class, 'updateTheme');
+$router->post('/admin/themes/{id}/delete', AdminController::class, 'deleteTheme');
+$router->post('/admin/courses/{id}/update', AdminController::class, 'updateCourse');
+$router->post('/admin/lessons/create', AdminController::class, 'createLesson');
+$router->post('/admin/lessons/{id}/update', AdminController::class, 'updateLesson');
+$router->post('/admin/lessons/{id}/delete', AdminController::class, 'deleteLesson');
 
-// Checkout & Stripe routes
-$router->get('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');
-$router->get('/checkout/lesson/{id}', CheckoutController::class, 'checkoutLesson');
+// Checkout & Stripe routes (POST secured with CSRF)
+$router->post('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');
+$router->post('/checkout/lesson/{id}', CheckoutController::class, 'checkoutLesson');
 $router->get('/checkout/success', CheckoutController::class, 'success');
 $router->get('/checkout/cancel', CheckoutController::class, 'cancel');
 $router->post('/stripe/webhook', StripeWebhookController::class, 'handle');

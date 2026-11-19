@@ -17,7 +17,7 @@
   - Protection anti-énumération de comptes sur la connexion
   - Régénération d'identifiant de session (`session_regenerate_id`) contre la fixation de session
 - **Paiement E-Commerce Sandbox** : Stripe Checkout (mode test) validé par Webhook serveur sécurisé par signature cryptographique
-- **Tests Unitaires & Sécurité** : PHPUnit 11 (24 tests, 80 assertions, isolation par transactions PDO)
+- **Tests Unitaires & Sécurité** : PHPUnit 11 (37 tests, 117 assertions, isolation par transactions PDO)
 - **Gestionnaire de dépendances** : Composer (Autoloading PSR-4)
 - **Environnement** : Configuration sécurisée via Dotenv (`.env`)
 
@@ -75,8 +75,10 @@ FLUSH PRIVILEGES;
 
 ### 3. Initialisation de la base de données
 Exécutez dans votre client MySQL (ou phpMyAdmin) :
-1. `database/schema.sql` (création des 10 tables et clés étrangères)
+1. `database/schema.sql` (création des 11 tables et clés étrangères)
 2. `database/fixtures.sql` (chargement du catalogue de cours et comptes démo)
+
+> **Base existante créée avant la migration 002 :** appliquez `database/migrations/002_theme_certifications.sql` au lieu de recréer la base. Il ajoute la table `course_validations` et fait passer les certifications du niveau cursus au niveau thème.
 
 ### 4. Démarrage du serveur local
 ```bash
@@ -101,7 +103,7 @@ L'application est immédiatement accessible à l'adresse : **[http://localhost:8
 ```bash
 ./vendor/bin/phpunit
 ```
-> **Résultat attendu :** 24 tests exécutés avec succès (100% verts), couvrant le routage, la validation de mot de passe, les tokens CSRF, l'authentification, les transactions d'achat, le cycle de certification et la résistance aux injections SQL.
+> **Résultat attendu :** 37 tests exécutés avec succès (100% verts), couvrant le routage, la validation de mot de passe, les tokens CSRF, l'authentification, les transactions d'achat, la validation des cursus et des thèmes, la vérification des webhooks Stripe, le catalogue du backoffice et la résistance aux injections SQL.
 
 ---
 

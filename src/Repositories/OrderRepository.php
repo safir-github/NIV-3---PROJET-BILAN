@@ -136,6 +136,18 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Delete an unfulfilled or failed pending order.
+     *
+     * @param int $orderId
+     * @return bool
+     */
+    public function deleteOrder(int $orderId): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM orders WHERE id = :id AND status = 'pending'");
+        return $stmt->execute(['id' => $orderId]);
+    }
+
+    /**
      * Find all orders with user details for admin dashboard.
      *
      * @return array<int, array<string, mixed>>

@@ -5,6 +5,7 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS certifications;
+DROP TABLE IF EXISTS course_validations;
 DROP TABLE IF EXISTS lesson_validations;
 DROP TABLE IF EXISTS user_lessons;
 DROP TABLE IF EXISTS user_courses;
@@ -173,19 +174,36 @@ CREATE TABLE lesson_validations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
--- 10. Table: certifications (Certifications automatiques obtenues)
+-- 10. Table: course_validations (Cursus validé quand toutes ses leçons sont validées)
+-- ---------------------------------------------------------------------
+CREATE TABLE course_validations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    course_id INT NOT NULL,
+    validated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(100) NOT NULL DEFAULT 'system',
+    updated_by VARCHAR(100) NOT NULL DEFAULT 'system',
+    UNIQUE KEY uq_user_course_validation (user_id, course_id),
+    CONSTRAINT fk_cv_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_cv_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- 11. Table: certifications (Certification obtenue quand toutes les leçons d'un thème sont validées)
 -- ---------------------------------------------------------------------
 CREATE TABLE certifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    course_id INT NOT NULL,
+    theme_id INT NOT NULL,
     certificate_code VARCHAR(100) NOT NULL UNIQUE,
     issued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_by VARCHAR(100) NOT NULL DEFAULT 'system',
     updated_by VARCHAR(100) NOT NULL DEFAULT 'system',
-    UNIQUE KEY uq_user_course_cert (user_id, course_id),
+    UNIQUE KEY uq_user_theme_cert (user_id, theme_id),
     CONSTRAINT fk_cert_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_cert_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    CONSTRAINT fk_cert_theme FOREIGN KEY (theme_id) REFERENCES themes(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

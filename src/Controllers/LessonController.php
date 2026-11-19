@@ -77,8 +77,8 @@ class LessonController extends BaseController
         // 4. Save validation
         $this->progressRepository->validateLesson($user->getId(), $lesson->getId());
 
-        // 5. Check if all lessons of the course are complete to award certificate
-        $this->certificationService->checkAndAwardCourseCertification($user->getId(), $lesson->getCourseId());
+        // 5. Update course validation and theme certification when the rules are met
+        $this->certificationService->checkAndAwardCertification($user->getId(), $lesson->getCourseId());
 
         // Redirect back to lesson page
         $this->redirect('/lessons/' . $lesson->getSlug());

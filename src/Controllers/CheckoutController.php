@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Auth;
+use App\Core\Csrf;
 use App\Repositories\AccessRepository;
 use App\Repositories\CatalogRepository;
 use App\Repositories\OrderRepository;
@@ -68,7 +69,19 @@ class CheckoutController extends BaseController
      */
     private function processCheckout(string $type, int $itemId): void
     {
-        // 1. User must be authenticated
+        // 1. Validate CSRF Token
+        $token = $_POST['_csrf_token'] ?? null;
+        if (!Csrf::validateToken($token)) {
+            http_response_code(403);
+            $this->render('errors/error', [
+                'errorCode' => 403,
+                'pageTitle' => 'Erreur de sécurité (403)',
+                'message' => 'Jeton de sécurité CSRF invalide ou formulaire expiré. Veuillez réessayer.'
+            ]);
+            return;
+        }
+
+        // 2. User must be authenticated
         if (!Auth::check()) {
             $this->redirect('/login');
             return;
@@ -76,11 +89,12 @@ class CheckoutController extends BaseController
 
         $user = Auth::user();
 
-        // 2. User account must be active (email activated)
+        // 3. User account must be active (email activated)
         if ($user === null || !$user->isActive()) {
             http_response_code(403);
-            $this->render('errors/404', [
-                'pageTitle' => 'Achat non autorisé',
+            $this->render('errors/error', [
+                'errorCode' => 403,
+                'pageTitle' => 'Achat non autorisé (403)',
                 'message' => 'Votre compte doit être activé par email avant de pouvoir commander des cours.'
             ]);
             return;
@@ -146,13 +160,17 @@ class CheckoutController extends BaseController
             header('Location: ' . $session->url, true, 303);
             exit;
         } catch (Exception $e) {
-            // In case of Stripe API key placeholder or connection error
-            $this->render('checkout/test_bypass', [
-                'pageTitle' => 'Paiement Sandbox (Mode Test)',
-                'order' => $order,
-                'title' => $title,
-                'price' => $price,
-                'error' => $e->getMessage()
+            // Log technical detail for administrator/developer
+            error_log('Stripe Checkout Error: ' . $e->getMessage());
+
+            // Clean up unfulfilled pending order so no orphan order remains
+            $this->orderRepository->deleteOrder($order['id']);
+
+            http_response_code(502);
+            $this->render('errors/error', [
+                'errorCode' => 502,
+                'pageTitle' => 'Passerelle de paiement indisponible',
+                'message' => 'Impossible d\'initialiser la session de paiement sécurisée pour le moment. Veuillez vérifier la configuration de paiement ou réessayer ultérieurement.'
             ]);
         }
     }

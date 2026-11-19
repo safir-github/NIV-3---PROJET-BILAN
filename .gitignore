@@ -3,6 +3,8 @@
 
 # Dossier de travail local et privé (consignes, notes, plans de formation)
 WORK-LOCAL/
+ancien-contexte.md
+docs/PLAN-SOUTENANCE.md
 
 # Dépendances Composer & configuration d'environnement
 /vendor/

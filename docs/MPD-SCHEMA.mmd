@@ -15,7 +15,8 @@ erDiagram
     courses ||--o{ user_courses : "granted_to"
     lessons ||--o{ user_lessons : "granted_to"
     lessons ||--o{ lesson_validations : "validated_in"
-    courses ||--o{ certifications : "certified_in"
+    themes ||--o{ certifications : "certified_in"
+    courses ||--o{ course_validations : "validated_in"
 
     users {
         int id PK
@@ -130,10 +131,21 @@ erDiagram
         string updated_by
     }
 
-    certifications {
+    course_validations {
         int id PK
         int user_id FK
         int course_id FK
+        datetime validated_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    certifications {
+        int id PK
+        int user_id FK
+        int theme_id FK
         string certificate_code UK
         datetime issued_at
         datetime created_at

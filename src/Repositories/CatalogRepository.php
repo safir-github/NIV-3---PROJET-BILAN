@@ -188,4 +188,199 @@ class CatalogRepository extends BaseRepository
         $stmt = $this->db->prepare('DELETE FROM courses WHERE id = :id');
         return $stmt->execute(['id' => $id]);
     }
+
+    /**
+     * Update the editable fields of a course.
+     *
+     * @param int   $id
+     * @param array $data Keys: theme_id, title, slug, description, price
+     * @return bool
+     */
+    public function updateCourse(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE courses
+             SET theme_id = :theme_id, title = :title, slug = :slug, description = :description, price = :price, updated_by = :updated_by
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'theme_id' => $data['theme_id'],
+            'title' => $data['title'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'price' => $data['price'],
+            'updated_by' => 'admin',
+        ]);
+    }
+
+    /**
+     * Find a theme by its primary key.
+     *
+     * @param int $id
+     * @return Theme|null
+     */
+    public function findThemeById(int $id): ?Theme
+    {
+        $stmt = $this->db->prepare('SELECT * FROM themes WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch();
+        return $row ? new Theme($row) : null;
+    }
+
+    /**
+     * Create a theme.
+     *
+     * @param array $data Keys: name, slug, description
+     * @return int The new theme ID
+     */
+    public function createTheme(array $data): int
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO themes (name, slug, description, created_by, updated_by)
+             VALUES (:name, :slug, :description, :created_by, :updated_by)'
+        );
+        $stmt->execute([
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'created_by' => 'admin',
+            'updated_by' => 'admin',
+        ]);
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Update a theme.
+     *
+     * @param int   $id
+     * @param array $data Keys: name, slug, description
+     * @return bool
+     */
+    public function updateTheme(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE themes SET name = :name, slug = :slug, description = :description, updated_by = :updated_by WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'updated_by' => 'admin',
+        ]);
+    }
+
+    /**
+     * Delete a theme. Its courses, lessons and certifications are removed by ON DELETE CASCADE.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteTheme(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM themes WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * Create a lesson.
+     *
+     * @param array $data Keys: course_id, title, slug, description, content_text, video_url, price, position
+     * @return int The new lesson ID
+     */
+    public function createLesson(array $data): int
+    {
+        $stmt = $this->db->prepare(
+            'INSERT INTO lessons (course_id, title, slug, description, content_text, video_url, price, position, created_by, updated_by)
+             VALUES (:course_id, :title, :slug, :description, :content_text, :video_url, :price, :position, :created_by, :updated_by)'
+        );
+        $stmt->execute([
+            'course_id' => $data['course_id'],
+            'title' => $data['title'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'content_text' => $data['content_text'] ?? null,
+            'video_url' => $data['video_url'] ?? null,
+            'price' => $data['price'],
+            'position' => $data['position'] ?? 1,
+            'created_by' => 'admin',
+            'updated_by' => 'admin',
+        ]);
+
+        return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Update a lesson.
+     *
+     * @param int   $id
+     * @param array $data Same keys as createLesson()
+     * @return bool
+     */
+    public function updateLesson(int $id, array $data): bool
+    {
+        $stmt = $this->db->prepare(
+            'UPDATE lessons
+             SET course_id = :course_id, title = :title, slug = :slug, description = :description,
+                 content_text = :content_text, video_url = :video_url, price = :price, position = :position, updated_by = :updated_by
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $id,
+            'course_id' => $data['course_id'],
+            'title' => $data['title'],
+            'slug' => $data['slug'],
+            'description' => $data['description'] ?? null,
+            'content_text' => $data['content_text'] ?? null,
+            'video_url' => $data['video_url'] ?? null,
+            'price' => $data['price'],
+            'position' => $data['position'] ?? 1,
+            'updated_by' => 'admin',
+        ]);
+    }
+
+    /**
+     * Delete a lesson.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteLesson(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM lessons WHERE id = :id');
+        return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * Check whether a slug is already used in a given table.
+     *
+     * @param string   $table   Either 'themes', 'courses' or 'lessons'
+     * @param string   $slug
+     * @param int|null $exceptId ID to ignore (the row being updated)
+     * @return bool
+     */
+    public function slugExists(string $table, string $slug, ?int $exceptId = null): bool
+    {
+        // Only fixed table names are accepted, never user input
+        if (!in_array($table, ['themes', 'courses', 'lessons'], true)) {
+            throw new \InvalidArgumentException('Unknown table: ' . $table);
+        }
+
+        $sql = "SELECT COUNT(*) FROM {$table} WHERE slug = :slug";
+        $params = ['slug' => $slug];
+
+        if ($exceptId !== null) {
+            $sql .= ' AND id <> :except_id';
+            $params['except_id'] = $exceptId;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn() > 0;
+    }
 }

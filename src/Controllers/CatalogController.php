@@ -138,6 +138,10 @@ class CatalogController extends BaseController
         }
 
         $course = $this->catalogRepository->findCourseById($lesson->getCourseId());
+        if ($course !== null) {
+            $courseLessons = $this->catalogRepository->findLessonsByCourseId($course->getId());
+            $course->setLessons($courseLessons);
+        }
 
         $currentUser = Auth::user();
         $hasAccess = false;

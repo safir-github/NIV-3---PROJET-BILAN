@@ -34,6 +34,7 @@ class Auth
 
     /**
      * Get the currently authenticated User instance or null.
+     * Automatically purges the session if the user record no longer exists in database.
      *
      * @return User|null
      */
@@ -45,8 +46,15 @@ class Auth
 
         $userId = (int) $_SESSION[self::SESSION_USER_ID];
         $repository = new UserRepository();
+        $user = $repository->findById($userId);
 
-        return $repository->findById($userId);
+        if ($user === null) {
+            // User was deleted or is invalid: clean up session
+            self::logout();
+            return null;
+        }
+
+        return $user;
     }
 
     /**

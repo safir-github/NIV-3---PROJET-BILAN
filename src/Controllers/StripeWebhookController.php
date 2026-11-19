@@ -62,14 +62,36 @@ class StripeWebhookController
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
             $orderId = isset($session->client_reference_id) ? (int) $session->client_reference_id : null;
+            $order = $orderId ? $this->orderRepository->findById($orderId) : null;
 
-            if ($orderId) {
+            if ($order !== null && $this->isPaymentConfirmed($session, $order)) {
                 $this->fulfillOrder($orderId);
+            } elseif ($order !== null) {
+                // Never grant access for an unpaid or mismatched session
+                error_log('Stripe webhook ignored for order ' . $orderId . ': payment not confirmed or amount mismatch');
             }
         }
 
         http_response_code(200);
         echo json_encode(['status' => 'success']);
+    }
+
+    /**
+     * Check that a Checkout Session was really paid, for the amount of the order.
+     *
+     * Stripe amounts are in cents, so the order total (e.g. 50.00) is compared as 5000.
+     *
+     * @param object $session The checkout.session object sent by Stripe
+     * @param array  $order   The local order row
+     * @return bool
+     */
+    public function isPaymentConfirmed(object $session, array $order): bool
+    {
+        $paid = ($session->payment_status ?? null) === 'paid';
+        $expectedCents = (int) round(((float) $order['total_amount']) * 100);
+        $amountMatches = (int) ($session->amount_total ?? -1) === $expectedCents;
+
+        return $paid && $amountMatches;
     }
 
     /**

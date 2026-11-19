@@ -49,10 +49,19 @@ body {
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--primary-dark);
+}
+
+.brand-logo-img {
+    height: 48px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.brand-logo-img:hover {
+    transform: scale(1.02);
 }
 
 .brand-name span {
@@ -373,14 +382,13 @@ body {
 
 .themes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
 }
 
 .theme-card {
     background: var(--white);
-    padding: 1.5rem;
-    border-radius: 10px;
+    border-radius: 12px;
     text-decoration: none;
     color: inherit;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -388,21 +396,44 @@ body {
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .theme-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 73, 124, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 73, 124, 0.12);
 }
 
-.theme-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+.theme-image-wrapper, .course-image-wrapper {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.theme-banner-img, .course-banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.theme-card:hover .theme-banner-img,
+.course-card:hover .course-banner-img {
+    transform: scale(1.05);
+}
+
+.theme-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .theme-name {
     color: var(--primary-dark);
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     margin-bottom: 0.5rem;
 }
 
@@ -410,29 +441,42 @@ body {
     color: #667085;
     font-size: 0.9rem;
     flex-grow: 1;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
 }
 
 .theme-link {
     color: var(--primary-blue);
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
 }
 
 .courses-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.8rem;
 }
 
 .course-card {
     background: var(--white);
-    padding: 1.8rem;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     border: 1px solid #e4e7ec;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 73, 124, 0.12);
+}
+
+.course-card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .course-badge {
@@ -1004,3 +1048,81 @@ body {
     color: var(--white);
 }
 
+/* Optimisation Responsive globale */
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    .brand-logo-img {
+        height: 38px;
+        max-width: 140px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+    }
+
+    .course-header-card {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-options {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-split {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Backoffice catalogue page (views/admin/catalog.php) */
+.catalog-admin .inline-form {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.6rem;
+    margin: 0.6rem 0;
+}
+
+.catalog-admin .inline-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.catalog-admin .auth-form {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.6rem;
+    max-width: none;
+    margin: 0.6rem 0;
+    text-align: left;
+}
+
+.catalog-admin .inline-form textarea {
+    min-width: 220px;
+}
+
+.catalog-admin .course-admin-block {
+    border-top: 1px solid #d0d5dd;
+    padding: 1rem 0;
+}
+
+.catalog-admin table td {
+    text-align: left;
+}

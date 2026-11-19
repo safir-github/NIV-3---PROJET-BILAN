@@ -1084,3 +1084,45 @@ body {
     }
 }
 
+
+/* Backoffice catalogue page (views/admin/catalog.php) */
+.catalog-admin .inline-form {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.6rem;
+    margin: 0.6rem 0;
+}
+
+.catalog-admin .inline-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.catalog-admin .auth-form {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.6rem;
+    max-width: none;
+    margin: 0.6rem 0;
+    text-align: left;
+}
+
+.catalog-admin .inline-form textarea {
+    min-width: 220px;
+}
+
+.catalog-admin .course-admin-block {
+    border-top: 1px solid #d0d5dd;
+    padding: 1rem 0;
+}
+
+.catalog-admin table td {
+    text-align: left;
+}

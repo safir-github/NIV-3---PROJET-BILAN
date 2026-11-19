@@ -11,7 +11,7 @@ erDiagram
     users ||--o{ orders : "passe"
     users ||--o{ user_courses : "possede"
     users ||--o{ user_lessons : "possede"
-    users ||--o{ lesson_validations : "valide"
+    users ||--o{ lesson_validations : "validates"
     users ||--o{ certifications : "obtient"
 
     themes ||--|{ courses : "regroupe"
@@ -24,7 +24,9 @@ erDiagram
     courses ||--o{ user_courses : "accorde"
     lessons ||--o{ user_lessons : "accorde"
     lessons ||--o{ lesson_validations : "enregistre"
-    courses ||--o{ certifications : "certifie"
+    themes ||--o{ certifications : "certifie"
+    courses ||--o{ course_validations : "validated_by"
+    users ||--o{ course_validations : "validates"
 
     users {
         int id PK
@@ -139,10 +141,21 @@ erDiagram
         string updated_by
     }
 
-    certifications {
+    course_validations {
         int id PK
         int user_id FK
         int course_id FK
+        datetime validated_at
+        datetime created_at
+        datetime updated_at
+        string created_by
+        string updated_by
+    }
+
+    certifications {
+        int id PK
+        int user_id FK
+        int theme_id FK
         string certificate_code UK
         datetime issued_at
         datetime created_at
@@ -165,7 +178,8 @@ erDiagram
 7. **`user_courses`** : Droits d'accès acquis par l'apprenant pour un cursus complet (contrainte `UNIQUE(user_id, course_id)`).
 8. **`user_lessons`** : Droits d'accès acquis par l'apprenant pour une leçon individuelle achetée à l'unité.
 9. **`lesson_validations`** : Historique des validations d'étapes d'apprentissage par leçon.
-10. **`certifications`** : Attestations officielles délivrées automatiquement avec code d'authenticité unique (`KL-CERT-YYYY-XXXX`).
+10. **`course_validations`** : Cursus validé quand toutes ses leçons sont validées (contrainte `UNIQUE(user_id, course_id)`).
+11. **`certifications`** : Attestation par thème, délivrée quand toutes les leçons du thème sont validées, avec un code d'authenticité unique (`KL-CERT-YYYY-XXXX`).
 
 ---
 

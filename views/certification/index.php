@@ -8,7 +8,7 @@
         <div class="empty-state-card">
             <div class="empty-state-icon">🎓</div>
             <h2>Aucune certification pour l'instant</h2>
-            <p>Validez toutes les leçons d'un cursus pour débloquer automatiquement votre attestation de réussite officielle.</p>
+            <p>Validez toutes les leçons d'un thème pour débloquer automatiquement votre attestation de réussite officielle.</p>
             <a href="/courses" class="btn btn-primary">Explorer les cours</a>
         </div>
     <?php else: ?>
@@ -17,7 +17,7 @@
                 <div class="certificate-badge-card">
                     <div class="certificate-seal">🏅</div>
                     <span class="cert-theme-tag"><?= htmlspecialchars($cert['theme_name'], ENT_QUOTES, 'UTF-8') ?></span>
-                    <h3 class="cert-course-title"><?= htmlspecialchars($cert['course_title'], ENT_QUOTES, 'UTF-8') ?></h3>
+                    <h3 class="cert-course-title">Certification « <?= htmlspecialchars($cert['theme_name'], ENT_QUOTES, 'UTF-8') ?> »</h3>
                     <p class="cert-issuer">Délivré par <strong>Knowledge Learning</strong></p>
 
                     <div class="cert-code-box">

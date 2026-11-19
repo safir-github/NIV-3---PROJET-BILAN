@@ -2,6 +2,7 @@
     <div class="page-header">
         <h1>⚙️ Backoffice Administrateur</h1>
         <p class="subtitle">Gestion centralisée des utilisateurs, du catalogue et des commandes.</p>
+        <p><a href="/admin/catalog" class="btn btn-primary btn-sm">Gérer le catalogue (thèmes, cursus, leçons)</a></p>
     </div>
 
     <!-- 1. Gestion des Utilisateurs -->

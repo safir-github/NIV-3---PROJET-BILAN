@@ -16,11 +16,16 @@
             <div class="courses-grid">
                 <?php foreach ($courses as $course): ?>
                     <div class="course-card">
-                        <h3 class="course-title"><?= htmlspecialchars($course->getTitle(), ENT_QUOTES, 'UTF-8') ?></h3>
-                        <p class="course-desc"><?= htmlspecialchars($course->getDescription() ?? '', ENT_QUOTES, 'UTF-8') ?></p>
-                        <div class="course-footer">
-                            <span class="course-price"><?= number_format($course->getPrice(), 2, ',', ' ') ?> €</span>
-                            <a href="/courses/<?= htmlspecialchars($course->getSlug(), ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary btn-sm">Accéder au cursus</a>
+                        <div class="course-image-wrapper">
+                            <img src="/assets/images/course-banner.jpg" alt="<?= htmlspecialchars($course->getTitle(), ENT_QUOTES, 'UTF-8') ?>" class="course-banner-img">
+                        </div>
+                        <div class="course-card-content">
+                            <h3 class="course-title"><?= htmlspecialchars($course->getTitle(), ENT_QUOTES, 'UTF-8') ?></h3>
+                            <p class="course-desc"><?= htmlspecialchars($course->getDescription() ?? '', ENT_QUOTES, 'UTF-8') ?></p>
+                            <div class="course-footer">
+                                <span class="course-price"><?= number_format($course->getPrice(), 2, ',', ' ') ?> €</span>
+                                <a href="/courses/<?= htmlspecialchars($course->getSlug(), ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary btn-sm">Accéder au cursus</a>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>

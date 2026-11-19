@@ -91,7 +91,7 @@ class AdminController extends BaseController
         $token = $_POST['_csrf_token'] ?? null;
         if (Csrf::validateToken($token)) {
             $role = $_POST['role'] ?? 'ROLE_CLIENT';
-            if (in_array($role, ['ROLE_CLIENT', 'ROLE_ADMIN'], true)) {
+            if (in_array($role, \App\Models\User::AVAILABLE_ROLES, true)) {
                 $this->userRepository->updateRole((int) $id, $role);
             }
         }

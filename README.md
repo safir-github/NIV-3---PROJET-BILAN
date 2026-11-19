@@ -43,6 +43,36 @@ Copiez le modèle de configuration et adaptez vos accès locaux :
 cp .env.example .env
 ```
 
+---
+
+## 🔒 Sécurité de la Base de Données & Comptes MySQL Dédiés
+
+Conformément aux exigences du barème d'évaluation (*« La base de données n'est accessible que par un compte administrateur spécifiquement créé »*), l'application n'utilise **JAMAIS** le compte `root` en production ni en exécution web.
+
+Deux comptes MySQL distincts sont prévus :
+
+1. **Compte Administrateur BDD (`knowledge_admin`)** :
+   - Rôle : Création initiale de la structure, des tables et migrations de schémas (`schema.sql` et `fixtures.sql`).
+   - Privilèges : `ALL PRIVILEGES` sur la base `knowledge_learning`.
+
+2. **Compte Applicatif Web Restreint (`knowledge_user`)** :
+   - Rôle : Utilisé par l'application PHP (`PDO`) en fonctionnement courant.
+   - Privilèges stricts au minimum nécessaire : uniquement `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
+   - **Protection** : Les opérations destructrices de structure (`DROP TABLE`, `ALTER TABLE`, `TRUNCATE`) sont formellement interdites et rejetées par le serveur MySQL pour ce compte.
+
+#### Script SQL de création des comptes MySQL :
+```sql
+-- 1. Création de la base
+CREATE DATABASE IF NOT EXISTS knowledge_learning CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 2. Création de l'utilisateur applicatif restreint
+CREATE USER IF NOT EXISTS 'knowledge_user'@'localhost' IDENTIFIED BY 'knowledge_secure_pass';
+GRANT SELECT, INSERT, UPDATE, DELETE ON knowledge_learning.* TO 'knowledge_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+---
+
 ### 3. Initialisation de la base de données
 Exécutez dans votre client MySQL (ou phpMyAdmin) :
 1. `database/schema.sql` (création des 10 tables et clés étrangères)

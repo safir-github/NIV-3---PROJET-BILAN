@@ -104,4 +104,19 @@ class AuthTest extends TestCase
         $consumedLookup = $this->userRepository->findByActivationToken($activationToken);
         $this->assertNull($consumedLookup);
     }
+
+    /**
+     * Test third role assignment (ROLE_INSTRUCTOR) and role segregation.
+     */
+    public function testOtherRoleHasNoAdminPrivilege(): void
+    {
+        $user = new User([
+            'email' => 'instructor@knowledge.local',
+            'role' => User::ROLE_INSTRUCTOR
+        ]);
+
+        $this->assertSame(User::ROLE_INSTRUCTOR, $user->getRole());
+        $this->assertFalse($user->isAdmin());
+        $this->assertContains(User::ROLE_INSTRUCTOR, User::AVAILABLE_ROLES);
+    }
 }

@@ -41,6 +41,7 @@
                                     <select name="role" class="form-select-sm">
                                         <option value="ROLE_CLIENT" <?= $u->getRole() === 'ROLE_CLIENT' ? 'selected' : '' ?>>Client</option>
                                         <option value="ROLE_ADMIN" <?= $u->getRole() === 'ROLE_ADMIN' ? 'selected' : '' ?>>Admin</option>
+                                        <option value="ROLE_INSTRUCTOR" <?= $u->getRole() === 'ROLE_INSTRUCTOR' ? 'selected' : '' ?>>Formateur</option>
                                     </select>
                                     <button type="submit" class="btn btn-outline btn-sm">Changer</button>
                                 </form>

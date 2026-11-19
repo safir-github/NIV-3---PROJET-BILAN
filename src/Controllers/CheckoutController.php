@@ -160,6 +160,9 @@ class CheckoutController extends BaseController
             header('Location: ' . $session->url, true, 303);
             exit;
         } catch (Exception $e) {
+            // Log technical detail for administrator/developer
+            error_log('Stripe Checkout Error: ' . $e->getMessage());
+
             // Clean up unfulfilled pending order so no orphan order remains
             $this->orderRepository->deleteOrder($order['id']);
 
@@ -167,7 +170,7 @@ class CheckoutController extends BaseController
             $this->render('errors/error', [
                 'errorCode' => 502,
                 'pageTitle' => 'Passerelle de paiement indisponible',
-                'message' => 'Impossible d\'initialiser la session de paiement sécurisée Stripe (' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '). La commande en attente a été annulée.'
+                'message' => 'Impossible d\'initialiser la session de paiement sécurisée pour le moment. Veuillez vérifier la configuration de paiement ou réessayer ultérieurement.'
             ]);
         }
     }

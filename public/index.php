@@ -15,6 +15,8 @@ use App\Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\CatalogController;
+use App\Controllers\CheckoutController;
+use App\Controllers\StripeWebhookController;
 
 // Load environment variables (.env)
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
@@ -29,6 +31,13 @@ $router->get('/courses', CatalogController::class, 'index');
 $router->get('/themes/{slug}', CatalogController::class, 'theme');
 $router->get('/courses/{slug}', CatalogController::class, 'course');
 $router->get('/lessons/{slug}', CatalogController::class, 'lesson');
+
+// Checkout & Stripe routes
+$router->get('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');
+$router->get('/checkout/lesson/{id}', CheckoutController::class, 'checkoutLesson');
+$router->get('/checkout/success', CheckoutController::class, 'success');
+$router->get('/checkout/cancel', CheckoutController::class, 'cancel');
+$router->post('/stripe/webhook', StripeWebhookController::class, 'handle');
 
 // Authentication routes
 $router->get('/register', AuthController::class, 'showRegister');

@@ -74,4 +74,48 @@ class AccessRepository extends BaseRepository
 
         return (bool) $stmt->fetchColumn();
     }
+
+    /**
+     * Grant access to a full course.
+     *
+     * @param int $userId
+     * @param int $courseId
+     * @return bool
+     */
+    public function grantCourseAccess(int $userId, int $courseId): bool
+    {
+        $sql = 'INSERT INTO user_courses (user_id, course_id, created_by, updated_by)
+                VALUES (:user_id, :course_id, :created_by, :updated_by)
+                ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP';
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'course_id' => $courseId,
+            'created_by' => 'order_fulfillment',
+            'updated_by' => 'order_fulfillment'
+        ]);
+    }
+
+    /**
+     * Grant access to an individual lesson.
+     *
+     * @param int $userId
+     * @param int $lessonId
+     * @return bool
+     */
+    public function grantLessonAccess(int $userId, int $lessonId): bool
+    {
+        $sql = 'INSERT INTO user_lessons (user_id, lesson_id, created_by, updated_by)
+                VALUES (:user_id, :lesson_id, :created_by, :updated_by)
+                ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP';
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            'user_id' => $userId,
+            'lesson_id' => $lessonId,
+            'created_by' => 'order_fulfillment',
+            'updated_by' => 'order_fulfillment'
+        ]);
+    }
 }

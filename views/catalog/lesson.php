@@ -57,7 +57,10 @@
                 <div class="option-card">
                     <h3>Cette leçon seule</h3>
                     <p class="option-price"><?= number_format($lesson->getPrice(), 2, ',', ' ') ?> €</p>
-                    <a href="/checkout/lesson/<?= $lesson->getId() ?>" class="btn btn-outline btn-block">Acheter la leçon</a>
+                    <form action="/checkout/lesson/<?= $lesson->getId() ?>" method="POST">
+                        <?= \App\Core\Csrf::field() ?>
+                        <button type="submit" class="btn btn-outline btn-block">Acheter la leçon</button>
+                    </form>
                 </div>
 
                 <?php if ($course): ?>
@@ -65,7 +68,10 @@
                         <span class="popular-tag">Le plus avantageux</span>
                         <h3>Cursus complet</h3>
                         <p class="option-price"><?= number_format($course->getPrice(), 2, ',', ' ') ?> €</p>
-                        <a href="/checkout/course/<?= $course->getId() ?>" class="btn btn-primary btn-block">Acheter le cursus (<?= count($course->getLessons() ?? []) ?> leçons)</a>
+                        <form action="/checkout/course/<?= $course->getId() ?>" method="POST">
+                            <?= \App\Core\Csrf::field() ?>
+                            <button type="submit" class="btn btn-primary btn-block">Acheter le cursus (<?= count($course->getLessons() ?? []) ?> leçons)</button>
+                        </form>
                     </div>
                 <?php endif; ?>
             </div>

@@ -45,9 +45,9 @@ $router->post('/admin/users/{id}/role', AdminController::class, 'updateUserRole'
 $router->post('/admin/courses/create', AdminController::class, 'createCourse');
 $router->post('/admin/courses/{id}/delete', AdminController::class, 'deleteCourse');
 
-// Checkout & Stripe routes
-$router->get('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');
-$router->get('/checkout/lesson/{id}', CheckoutController::class, 'checkoutLesson');
+// Checkout & Stripe routes (POST secured with CSRF)
+$router->post('/checkout/course/{id}', CheckoutController::class, 'checkoutCourse');
+$router->post('/checkout/lesson/{id}', CheckoutController::class, 'checkoutLesson');
 $router->get('/checkout/success', CheckoutController::class, 'success');
 $router->get('/checkout/cancel', CheckoutController::class, 'cancel');
 $router->post('/stripe/webhook', StripeWebhookController::class, 'handle');

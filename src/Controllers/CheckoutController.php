@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Auth;
+use App\Core\Csrf;
 use App\Repositories\AccessRepository;
 use App\Repositories\CatalogRepository;
 use App\Repositories\OrderRepository;
@@ -68,7 +69,18 @@ class CheckoutController extends BaseController
      */
     private function processCheckout(string $type, int $itemId): void
     {
-        // 1. User must be authenticated
+        // 1. Validate CSRF Token
+        $token = $_POST['_csrf_token'] ?? null;
+        if (!Csrf::validateToken($token)) {
+            http_response_code(403);
+            $this->render('errors/404', [
+                'pageTitle' => 'Erreur de sécurité',
+                'message' => 'Jeton de sécurité CSRF invalide ou formulaire expiré. Veuillez réessayer.'
+            ]);
+            return;
+        }
+
+        // 2. User must be authenticated
         if (!Auth::check()) {
             $this->redirect('/login');
             return;
@@ -76,7 +88,7 @@ class CheckoutController extends BaseController
 
         $user = Auth::user();
 
-        // 2. User account must be active (email activated)
+        // 3. User account must be active (email activated)
         if ($user === null || !$user->isActive()) {
             http_response_code(403);
             $this->render('errors/404', [
@@ -146,13 +158,10 @@ class CheckoutController extends BaseController
             header('Location: ' . $session->url, true, 303);
             exit;
         } catch (Exception $e) {
-            // In case of Stripe API key placeholder or connection error
-            $this->render('checkout/test_bypass', [
-                'pageTitle' => 'Paiement Sandbox (Mode Test)',
-                'order' => $order,
-                'title' => $title,
-                'price' => $price,
-                'error' => $e->getMessage()
+            http_response_code(502);
+            $this->render('errors/404', [
+                'pageTitle' => 'Erreur Passerelle de Paiement',
+                'message' => 'Impossible de joindre la passerelle de paiement sécurisée Stripe. Veuillez vérifier votre connexion ou réessayer plus tard.'
             ]);
         }
     }

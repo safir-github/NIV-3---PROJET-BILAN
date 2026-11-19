@@ -14,6 +14,7 @@ use Dotenv\Dotenv;
 use App\Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
+use App\Controllers\CatalogController;
 
 // Load environment variables (.env)
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
@@ -22,8 +23,12 @@ $dotenv->safeLoad();
 // Initialize Router and define core routes
 $router = new Router();
 
-// Public routes
+// Public & Home routes
 $router->get('/', HomeController::class, 'index');
+$router->get('/courses', CatalogController::class, 'index');
+$router->get('/themes/{slug}', CatalogController::class, 'theme');
+$router->get('/courses/{slug}', CatalogController::class, 'course');
+$router->get('/lessons/{slug}', CatalogController::class, 'lesson');
 
 // Authentication routes
 $router->get('/register', AuthController::class, 'showRegister');

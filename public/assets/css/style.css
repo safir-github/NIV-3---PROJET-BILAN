@@ -49,10 +49,19 @@ body {
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: var(--primary-dark);
+}
+
+.brand-logo-img {
+    height: 48px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.brand-logo-img:hover {
+    transform: scale(1.02);
 }
 
 .brand-name span {
@@ -1002,5 +1011,41 @@ body {
 .btn-danger:hover {
     background: #d92d20;
     color: var(--white);
+}
+
+/* Optimisation Responsive globale */
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.5rem 0;
+    }
+
+    .brand-logo-img {
+        height: 38px;
+        max-width: 140px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.8rem;
+    }
+
+    .course-header-card {
+        grid-template-columns: 1fr;
+    }
+
+    .purchase-options {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-split {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
 }
 

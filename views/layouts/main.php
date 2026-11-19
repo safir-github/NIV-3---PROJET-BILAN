@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle ?? 'Knowledge Learning') ?></title>
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
     <header class="navbar">
         <div class="container nav-content">
-            <a href="/" class="brand-logo">
-                <span class="logo-icon">📖</span>
-                <span class="brand-name">KNOWLEDGE <span>Learning</span></span>
+            <a href="/" class="brand-logo" title="Knowledge Learning">
+                <img src="/assets/images/logo.jpg" alt="Logo Knowledge Learning" class="brand-logo-img">
             </a>
             <nav class="nav-links">
                 <a href="/">Accueil</a>

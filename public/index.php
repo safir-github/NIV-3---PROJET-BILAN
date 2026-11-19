@@ -13,6 +13,7 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 use Dotenv\Dotenv;
 use App\Core\Router;
 use App\Controllers\HomeController;
+use App\Controllers\AuthController;
 
 // Load environment variables (.env)
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
@@ -23,6 +24,14 @@ $router = new Router();
 
 // Public routes
 $router->get('/', HomeController::class, 'index');
+
+// Authentication routes
+$router->get('/register', AuthController::class, 'showRegister');
+$router->post('/register', AuthController::class, 'register');
+$router->get('/activate', AuthController::class, 'activate');
+$router->get('/login', AuthController::class, 'showLogin');
+$router->post('/login', AuthController::class, 'login');
+$router->post('/logout', AuthController::class, 'logout');
 
 // Dispatch incoming request
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';

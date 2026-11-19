@@ -18,6 +18,7 @@
                 <a href="/courses">Catalogue</a>
                 <?php if (\App\Core\Auth::check()): ?>
                     <?php $currentUser = \App\Core\Auth::user(); ?>
+                    <a href="/certifications">Certifications</a>
                     <span class="user-greeting">Bonjour, <?= htmlspecialchars($currentUser ? $currentUser->getFirstName() : 'Apprenant', ENT_QUOTES, 'UTF-8') ?></span>
                     <form action="/logout" method="POST" style="display:inline;">
                         <?= \App\Core\Csrf::field() ?>

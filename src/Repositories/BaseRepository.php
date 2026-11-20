@@ -18,6 +18,9 @@ abstract class BaseRepository
 {
     protected PDO $db;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(?PDO $db = null)
     {
         $this->db = $db ?? Database::getConnection();

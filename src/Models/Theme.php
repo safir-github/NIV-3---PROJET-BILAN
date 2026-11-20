@@ -18,6 +18,9 @@ class Theme
     private string $slug;
     private ?string $description;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(array $attributes = [])
     {
         $this->id = isset($attributes['id']) ? (int) $attributes['id'] : null;
@@ -26,8 +29,20 @@ class Theme
         $this->description = $attributes['description'] ?? null;
     }
 
+    /**
+     * Get the id.
+     */
     public function getId(): ?int { return $this->id; }
+    /**
+     * Get the name.
+     */
     public function getName(): string { return $this->name; }
+    /**
+     * Get the slug.
+     */
     public function getSlug(): string { return $this->slug; }
+    /**
+     * Get the description.
+     */
     public function getDescription(): ?string { return $this->description; }
 }

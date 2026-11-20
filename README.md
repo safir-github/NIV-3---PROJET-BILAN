@@ -60,12 +60,16 @@ Deux comptes MySQL distincts sont prévus :
    - Privilèges stricts au minimum nécessaire : uniquement `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
    - **Protection** : Les opérations destructrices de structure (`DROP TABLE`, `ALTER TABLE`, `TRUNCATE`) sont formellement interdites et rejetées par le serveur MySQL pour ce compte.
 
-#### Script SQL de création des comptes MySQL :
+#### Script SQL de création des comptes MySQL (à exécuter une seule fois, avec un compte MySQL administrateur, par exemple `root`) :
 ```sql
 -- 1. Création de la base
 CREATE DATABASE IF NOT EXISTS knowledge_learning CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- 2. Création de l'utilisateur applicatif restreint
+-- 2. Compte administrateur BDD (crée la structure, exécuté une seule fois)
+CREATE USER IF NOT EXISTS 'knowledge_admin'@'localhost' IDENTIFIED BY 'knowledge_admin_pass';
+GRANT ALL PRIVILEGES ON knowledge_learning.* TO 'knowledge_admin'@'localhost';
+
+-- 3. Compte applicatif restreint (utilisé par l'application PHP)
 CREATE USER IF NOT EXISTS 'knowledge_user'@'localhost' IDENTIFIED BY 'knowledge_secure_pass';
 GRANT SELECT, INSERT, UPDATE, DELETE ON knowledge_learning.* TO 'knowledge_user'@'localhost';
 FLUSH PRIVILEGES;
@@ -74,9 +78,14 @@ FLUSH PRIVILEGES;
 ---
 
 ### 3. Initialisation de la base de données
-Exécutez dans votre client MySQL (ou phpMyAdmin) :
-1. `database/schema.sql` (création des 11 tables et clés étrangères)
-2. `database/fixtures.sql` (chargement du catalogue de cours et comptes démo)
+La structure doit être créée avec le compte **`knowledge_admin`**, car `knowledge_user` n'a pas le droit de créer ou supprimer des tables.
+
+```bash
+mysql -u knowledge_admin -p knowledge_learning < database/schema.sql
+mysql -u knowledge_admin -p knowledge_learning < database/fixtures.sql
+```
+
+Le mot de passe demandé est celui du compte `knowledge_admin` défini dans le script ci-dessus.
 
 > **Base existante créée avant la migration 002 :** appliquez `database/migrations/002_theme_certifications.sql` au lieu de recréer la base. Il ajoute la table `course_validations` et fait passer les certifications du niveau cursus au niveau thème.
 
@@ -112,9 +121,17 @@ L'application est immédiatement accessible à l'adresse : **[http://localhost:8
 La documentation complète du schéma de données relationnel (diagramme entité-relation et explications) est consultable dans :
 👉 **[docs/MPD.md](docs/MPD.md)**
 
+![Modèle Physique de Données](docs/mpd.png)
+
 ---
 
 ## 📁 Architecture du Code (MVC 3-tiers)
+
+La documentation technique du code (classes, méthodes, paramètres) est générée avec phpDocumentor et consultable dans **[docs/api/index.html](docs/api/index.html)**. Pour la régénérer depuis la racine du projet (phpDocumentor 3 exige PHP 8.3 ou 8.4, il ne fonctionne pas avec PHP 8.5) :
+
+```bash
+phpdoc -d src -t docs/api
+```
 
 ```text
 ├── database/            <- Scripts SQL (schéma relationnel et données fixtures)

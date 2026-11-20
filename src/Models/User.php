@@ -36,6 +36,9 @@ class User
     private string $createdBy;
     private string $updatedBy;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(array $attributes = [])
     {
         $this->id = isset($attributes['id']) ? (int) $attributes['id'] : null;
@@ -52,23 +55,77 @@ class User
         $this->updatedBy = (string) ($attributes['updated_by'] ?? 'system');
     }
 
+    /**
+     * Get the id.
+     */
     public function getId(): ?int { return $this->id; }
+    /**
+     * Get the email.
+     */
     public function getEmail(): string { return $this->email; }
+    /**
+     * Get the password.
+     */
     public function getPassword(): string { return $this->password; }
+    /**
+     * Get the first name.
+     */
     public function getFirstName(): string { return $this->firstName; }
+    /**
+     * Get the last name.
+     */
     public function getLastName(): string { return $this->lastName; }
+    /**
+     * Get the full name.
+     */
     public function getFullName(): string { return trim($this->firstName . ' ' . $this->lastName); }
+    /**
+     * Get the role.
+     */
     public function getRole(): string { return $this->role; }
+    /**
+     * Check if the admin is true.
+     */
     public function isAdmin(): bool { return $this->role === 'ROLE_ADMIN'; }
+    /**
+     * Check if the active is true.
+     */
     public function isActive(): bool { return $this->isActive; }
+    /**
+     * Get the activation token.
+     */
     public function getActivationToken(): ?string { return $this->activationToken; }
+    /**
+     * Get the created at.
+     */
     public function getCreatedAt(): ?string { return $this->createdAt; }
 
+    /**
+     * Run the set email action.
+     */
     public function setEmail(string $email): self { $this->email = $email; return $this; }
+    /**
+     * Run the set password action.
+     */
     public function setPassword(string $password): self { $this->password = $password; return $this; }
+    /**
+     * Run the set first name action.
+     */
     public function setFirstName(string $firstName): self { $this->firstName = $firstName; return $this; }
+    /**
+     * Run the set last name action.
+     */
     public function setLastName(string $lastName): self { $this->lastName = $lastName; return $this; }
+    /**
+     * Run the set role action.
+     */
     public function setRole(string $role): self { $this->role = $role; return $this; }
+    /**
+     * Run the set is active action.
+     */
     public function setIsActive(bool $isActive): self { $this->isActive = $isActive; return $this; }
+    /**
+     * Run the set activation token action.
+     */
     public function setActivationToken(?string $token): self { $this->activationToken = $token; return $this; }
 }

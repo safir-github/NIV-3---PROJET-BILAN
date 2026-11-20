@@ -23,6 +23,9 @@ class Course
     /** @var Lesson[] */
     private array $lessons = [];
 
+    /**
+     * Create a new object.
+     */
     public function __construct(array $attributes = [])
     {
         $this->id = isset($attributes['id']) ? (int) $attributes['id'] : null;
@@ -34,12 +37,33 @@ class Course
         $this->themeName = $attributes['theme_name'] ?? null;
     }
 
+    /**
+     * Get the id.
+     */
     public function getId(): ?int { return $this->id; }
+    /**
+     * Get the theme id.
+     */
     public function getThemeId(): int { return $this->themeId; }
+    /**
+     * Get the title.
+     */
     public function getTitle(): string { return $this->title; }
+    /**
+     * Get the slug.
+     */
     public function getSlug(): string { return $this->slug; }
+    /**
+     * Get the description.
+     */
     public function getDescription(): ?string { return $this->description; }
+    /**
+     * Get the price.
+     */
     public function getPrice(): float { return $this->price; }
+    /**
+     * Get the theme name.
+     */
     public function getThemeName(): ?string { return $this->themeName; }
 
     /**

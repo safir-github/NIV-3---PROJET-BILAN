@@ -26,6 +26,9 @@ class CheckoutController extends BaseController
     private AccessRepository $accessRepository;
     private StripeService $stripeService;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?CatalogRepository $catalogRepository = null,
         ?OrderRepository $orderRepository = null,

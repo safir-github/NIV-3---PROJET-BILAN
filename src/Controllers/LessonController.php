@@ -25,6 +25,9 @@ class LessonController extends BaseController
     private ProgressRepository $progressRepository;
     private CertificationService $certificationService;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?CatalogRepository $catalogRepository = null,
         ?AccessRepository $accessRepository = null,

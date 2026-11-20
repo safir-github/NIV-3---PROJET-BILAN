@@ -23,6 +23,9 @@ class AuthController extends BaseController
     private PasswordValidator $passwordValidator;
     private Mailer $mailer;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?UserRepository $userRepository = null,
         ?PasswordValidator $passwordValidator = null,

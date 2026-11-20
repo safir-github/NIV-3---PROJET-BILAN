@@ -18,6 +18,9 @@ class CertificationController extends BaseController
 {
     private CertificationRepository $certificationRepository;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(?CertificationRepository $certificationRepository = null)
     {
         $this->certificationRepository = $certificationRepository ?? new CertificationRepository();

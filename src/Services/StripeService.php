@@ -22,6 +22,9 @@ class StripeService
     private string $secretKey;
     private string $webhookSecret;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(?string $secretKey = null, ?string $webhookSecret = null)
     {
         $this->secretKey = $secretKey ?? ($_ENV['STRIPE_SECRET_KEY'] ?? '');

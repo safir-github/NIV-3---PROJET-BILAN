@@ -26,6 +26,9 @@ class AdminController extends BaseController
     private CatalogRepository $catalogRepository;
     private OrderRepository $orderRepository;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?UserRepository $userRepository = null,
         ?CatalogRepository $catalogRepository = null,

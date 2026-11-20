@@ -22,6 +22,9 @@ class CertificationService
     private ProgressRepository $progressRepository;
     private CertificationRepository $certificationRepository;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?ProgressRepository $progressRepository = null,
         ?CertificationRepository $certificationRepository = null

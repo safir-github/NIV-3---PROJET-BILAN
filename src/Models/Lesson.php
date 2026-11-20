@@ -23,6 +23,9 @@ class Lesson
     private float $price;
     private int $position;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(array $attributes = [])
     {
         $this->id = isset($attributes['id']) ? (int) $attributes['id'] : null;
@@ -36,13 +39,40 @@ class Lesson
         $this->position = (int) ($attributes['position'] ?? 1);
     }
 
+    /**
+     * Get the id.
+     */
     public function getId(): ?int { return $this->id; }
+    /**
+     * Get the course id.
+     */
     public function getCourseId(): int { return $this->courseId; }
+    /**
+     * Get the title.
+     */
     public function getTitle(): string { return $this->title; }
+    /**
+     * Get the slug.
+     */
     public function getSlug(): string { return $this->slug; }
+    /**
+     * Get the description.
+     */
     public function getDescription(): ?string { return $this->description; }
+    /**
+     * Get the content text.
+     */
     public function getContentText(): ?string { return $this->contentText; }
+    /**
+     * Get the video url.
+     */
     public function getVideoUrl(): ?string { return $this->videoUrl; }
+    /**
+     * Get the price.
+     */
     public function getPrice(): float { return $this->price; }
+    /**
+     * Get the position.
+     */
     public function getPosition(): int { return $this->position; }
 }

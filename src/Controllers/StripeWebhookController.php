@@ -23,6 +23,9 @@ class StripeWebhookController
     private AccessRepository $accessRepository;
     private StripeService $stripeService;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?OrderRepository $orderRepository = null,
         ?AccessRepository $accessRepository = null,

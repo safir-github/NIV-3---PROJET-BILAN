@@ -20,6 +20,9 @@ class CatalogController extends BaseController
     private CatalogRepository $catalogRepository;
     private AccessRepository $accessRepository;
 
+    /**
+     * Create a new object.
+     */
     public function __construct(
         ?CatalogRepository $catalogRepository = null,
         ?AccessRepository $accessRepository = null
